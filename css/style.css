@@ -37,11 +37,11 @@ hr {
 }
 
 #map {
-  bottom:0px;
+  /*bottom:0px;*/
   height: 100%;
-  left: 362px;
+  /*left: 362px;
   position: absolute;
-  right: 0px;
+  right: 0px;*/
 }
 
 .options-box {
@@ -65,4 +65,44 @@ hr {
 
 .text {
   font-size: 12px;
+}
+
+.wrapper {
+    display: flex;
+    align-items: stretch;
+}
+
+#sidebar.active {
+    margin-left: -250px;
+}
+
+@media (max-width: 768px) {
+    #sidebar {
+        margin-left: -250px;
+    }
+    #sidebar.active {
+        margin-left: 0;
+    }
+}
+#sidebar {
+    min-width: 250px;
+    max-width: 250px;
+    min-height: 100vh;
+    transition: all 0.3s;
+}
+
+#sidebar.active {
+    margin-left: -250px;
+}
+
+#content {
+    padding: 20px;
+    min-height: 100vh;
+    transition: all 0.3s;
+    box-sizing: border-box;
+    width:100%;
+}
+#sidebar ul li {
+    padding: 10px;
+    font-size: 1.1em;
 }
