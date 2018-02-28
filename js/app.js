@@ -20,7 +20,7 @@ function initMap() {
   // Constructor creates a new map - only center and zoom are required.
   map = new google.maps.Map(document.getElementById('map'), {
     center: {lat: 48.856614, lng: 2.352222},
-    zoom: 20,
+    zoom: 13,
     mapTypeControl: false
   });
 }
@@ -72,36 +72,8 @@ function populateInfoWindow(marker, infowindow) {
     });
 
     getWiki(marker.title, infowindow);
-    var streetViewService = new google.maps.StreetViewService();
-    var radius = 50;
-    // In case the status is OK, which means the pano was found, compute the
-    // position of the streetview image, then calculate the heading, then get a
-    // panorama from that and set the options
-    function getStreetView(data, status) {
-      if (status == google.maps.StreetViewStatus.OK) {
-        var nearStreetViewLocation = data.location.latLng;
-        var heading = google.maps.geometry.spherical.computeHeading(
-          nearStreetViewLocation, marker.position);
-          var panoramaOptions = {
-            position: nearStreetViewLocation,
-            pov: {
-              heading: heading,
-              pitch: 30
-            }
-          };
-        var panorama = new google.maps.StreetViewPanorama(
-          document.getElementById('pano'), panoramaOptions);
-      } else {
-          innerHtml += ('<div>No Street View Found</div>');
-          infowindow.setContent(innerHtml);
-      }
-    }
-    // Use streetview service to get the closest streetview image within
-    // 50 meters of the markers position
-    streetViewService.getPanoramaByLocation(marker.position, radius, getStreetView);
-    // Open the infowindow on the correct marker.
     infowindow.open(map, marker);
-}
+  }
 }
 // This function takes in a COLOR, and then creates a new marker
 // icon of that color. The icon will be 21 px wide by 34 high, have an origin
@@ -119,7 +91,6 @@ function makeMarkerIcon(markerColor) {
 
 // This function retrieves articles related to specific location
 function getWiki(favItemTitle, infoWindow) {
-  console.log(favItemTitle);
   var wikiurl = 'https://en.wikipedia.org/w/api.php?'
       +'action=opensearch&search=' + favItemTitle
       + '&format=json&formatversion=2&redirect=&callback=wikiCallback';
@@ -138,18 +109,20 @@ function getWiki(favItemTitle, infoWindow) {
           return;
         }
 
-        $wikiElem.append('<h3>' + favItemTitle + ' Wikipedia Links </h3>');
-        $wikiElem.append('<ul class="list-unstyled components">');
+        var html = ('<h3>' + favItemTitle + ' Wikipedia Links </h3>');
+        html += ('<ul class="list-unstyled components">');
         var articleList = response[1];
         for (var i = 0; i < articleList.length; i++) {
           articleStr = articleList[i];
           var url = 'http://en.wikipedia.org/wiki/' + articleStr;
-          $wikiElem.append('<li><a href="' + url +'">'
+          html += ('<li><a href="' + url +'">'
               + articleStr + '</a></li>');
         };
-        $wikiElem.append('</ul>');
+        html += ('</ul>');
         if (articleList.length == 0) {
           $wikiElem.text("No wikipedia articles found.")
+        } else {
+          $wikiElem.append(html);
         }
         clearTimeout(wikiRequestTimeout)
       }

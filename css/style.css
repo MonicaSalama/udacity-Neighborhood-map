@@ -1,108 +1,180 @@
-html,
+/*
+    DEMO STYLE
+*/
+
 body {
-  font-family: Arial, sans-serif;
-  height: 100%;
-  margin: 0;
-  padding: 0;
+    font-family: sans-serif;
+    background: #fafafa;
 }
 
-.container {
-  height: 100%;
-  position: relative;
+
+li, li:hover, li:focus {
+    color: inherit;
+    text-decoration: none;
+    transition: all 0.3s;
 }
 
-input {
-  margin-left: 5px;
-  width: 80%;
-  font-size: 12px;
+.navbar {
+    padding: 15px 10px;
+    background: #fff;
+    border: none;
+    border-radius: 0;
+    margin-bottom: 40px;
+    box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.1);
 }
 
-h1 {
-  color: #525454;
-  font-size: 22px;
-  margin: 0 0 10px 0;
-  text-align: center;
+.navbar-btn {
+    box-shadow: none;
+    outline: none !important;
+    border: none;
 }
 
-#hide-listings,
-#show-listings {
-  width: 48%;
-}
-
-hr {
-  background: #D0D7D9;
-  height: 1px;
-  margin: 20px 0 20px 0;
-  border: none;
-}
-
-#map {
-  /*bottom:0px;*/
-  height: 100%;
-  /*left: 362px;
-  position: absolute;
-  right: 0px;*/
-}
-
-.options-box {
-  background: #fff;
-  border: 1px solid #999;
-  border-radius: 3px;
-  height: 100%;
-  line-height: 35px;
-  padding: 10px 10px 30px 10px;
-  text-align: left;
-  width: 340px;
-}
-.search-input {
-  width: inherit;
-}
-
-#pano {
-  width: 200px;
-  height: 200px;
-}
-
-.text {
-  font-size: 12px;
-}
-
+/* ---------------------------------------------------
+    SIDEBAR STYLE
+----------------------------------------------------- */
 .wrapper {
     display: flex;
     align-items: stretch;
+    perspective: 1500px;
 }
 
-#sidebar.active {
-    margin-left: -250px;
-}
-
-@media (max-width: 768px) {
-    #sidebar {
-        margin-left: -250px;
-    }
-    #sidebar.active {
-        margin-left: 0;
-    }
-}
 #sidebar {
     min-width: 250px;
     max-width: 250px;
-    min-height: 100vh;
-    transition: all 0.3s;
+    background: #7386D5;
+    color: #fff;
+    transition: all 0.6s cubic-bezier(0.945, 0.020, 0.270, 0.665);
+    transform-origin: bottom left;
 }
 
 #sidebar.active {
     margin-left: -250px;
 }
 
+#sidebar .sidebar-header {
+    padding: 20px;
+    background: #6d7fcc;
+}
+
+#sidebar ul.components {
+    padding: 20px 0;
+    border-bottom: 1px solid #47748b;
+}
+
+#sidebar ul {
+    color: #fff;
+    padding: 10px;
+}
+
+#sidebar ul li a {
+    padding: 10px;
+    font-size: 1.1em;
+    display: block;
+}
+#sidebar ul li a:hover {
+    color: #7386D5;
+    background: #fff;
+}
+#sidebar li:hover {
+    color: #7386D5;
+    background: #fff;
+}
+
+ul ul li a {
+    font-size: 0.9em !important;
+    padding-left: 30px !important;
+    background: #6d7fcc;
+}
+
+ul {
+    padding: 20px;
+}
+
+ul li {
+    text-align: center;
+    font-size: 0.9em !important;
+    display: block;
+    border-radius: 5px;
+    margin-bottom: 5px;
+}
+
+
+/* ---------------------------------------------------
+    CONTENT STYLE
+----------------------------------------------------- */
 #content {
+    width: 100%;
     padding: 20px;
     min-height: 100vh;
     transition: all 0.3s;
-    box-sizing: border-box;
-    width:100%;
 }
-#sidebar ul li {
-    padding: 10px;
-    font-size: 1.1em;
+
+#sidebarCollapse {
+    width: 40px;
+    height: 40px;
+    background: #f5f5f5;
+}
+
+#sidebarCollapse span {
+    width: 80%;
+    height: 2px;
+    margin: 0 auto;
+    display: block;
+    background: #555;
+}
+
+#sidebarCollapse span:first-of-type {
+    transform: rotate(45deg) translate(2px, 2px);
+}
+#sidebarCollapse span:nth-of-type(2) {
+    opacity: 0;
+}
+#sidebarCollapse span:last-of-type {
+    transform: rotate(-45deg) translate(1px, -1px);
+}
+
+
+
+#map {
+  height:100%;
+}
+
+a {
+  color: #fff;
+}
+input {
+  width: 100%;
+}
+/* ---------------------------------------------------
+    MEDIAQUERIES
+----------------------------------------------------- */
+@media (max-width: 768px) {
+    #sidebar {
+        margin-left: -250px;
+        transform: rotateY(90deg);
+    }
+    #sidebar.active {
+        margin-left: 0;
+        transform: none;
+    }
+    #sidebarCollapse span:first-of-type,
+    #sidebarCollapse span:nth-of-type(2),
+    #sidebarCollapse span:last-of-type {
+        transform: none;
+        opacity: 1;
+        margin: 5px auto;
+    }
+    #sidebarCollapse.active span {
+        margin: 0 auto;
+    }
+    #sidebarCollapse.active span:first-of-type {
+        transform: rotate(45deg) translate(2px, 2px);
+    }
+    #sidebarCollapse.active span:nth-of-type(2) {
+        opacity: 0;
+    }
+    #sidebarCollapse.active span:last-of-type {
+        transform: rotate(-45deg) translate(1px, -1px);
+    }
+
 }
