@@ -10,15 +10,16 @@
  <body>
     <div class="container">
         <div class="options-box">
-            <h1>Favourite Places</h1>
+            <h3>Favourite Places</h3>
             <div class="search-input">
               <input data-bind="value: filter, valueUpdate: 'afterkeydown', event: {'keyup': filterItems}" type="text" placeholder="Search for names..">
             </div>
             <div>
                 <ul data-bind ="foreach : favItems">
                   <li data-bind="text: $data, click: $parent.clickFavItem"></li>
-            </ul>
+                </ul>
             </div>
+            <div id="wikipedia-links"></div>
         </div>
     </div>
 
@@ -28,7 +29,7 @@
    <script src="js/lib/knockout-3.2.0.js"></script>
    <script src="js/lib/jquery.min.js"></script>
    <script src="js/app.js"></script>
-   <script src="https://maps.googleapis.com/maps/api/js?libraries=places&key=AIzaSyBiwexNxQpciCXtd-cHSFJZJflI4pDAX2o&callback=initApp"
+   <script src="https://maps.googleapis.com/maps/api/js?libraries=places,geometry,drawing&key=AIzaSyBiwexNxQpciCXtd-cHSFJZJflI4pDAX2o&callback=initApp"
     async defer></script>
  </body>
 </html>

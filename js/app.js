@@ -46,6 +46,9 @@ function marker(location, largeInfowindow) {
   return marker;
 }
 
+function clearWikipediaLinks() {
+  $('#wikipedia-links').html('');
+}
 // This function populates the infowindow when the marker is clicked. We'll only allow
 // one infowindow which will open at the marker that is clicked, and populate based
 // on that markers position.
@@ -53,21 +56,52 @@ function populateInfoWindow(marker, infowindow) {
   // Check to make sure the infowindow is not already opened on this marker.
   if (infowindow.marker != marker) {
     if(infowindow.marker != null) {
+      clearWikipediaLinks();
       infowindow.marker.setIcon(defaultIcon);
     }
     marker.setIcon(highlightedIcon);
     infowindow.marker = marker;
-    infowindow.setContent('<div>' + marker.title + '</div>');
-    getWiki(marker.title, infowindow);
-    infowindow.open(map, marker);
+    infowindow.setContent('<div>' + marker.title + '</div>' + '<div id="pano"></div>');
     // Make sure the marker property is cleared if the infowindow is closed.
     infowindow.addListener('closeclick', function() {
       if(infowindow.marker != null) {
+        clearWikipediaLinks();
         infowindow.marker.setIcon(defaultIcon);
       }
       infowindow.marker = null;
     });
-  }
+
+    getWiki(marker.title, infowindow);
+    var streetViewService = new google.maps.StreetViewService();
+    var radius = 50;
+    // In case the status is OK, which means the pano was found, compute the
+    // position of the streetview image, then calculate the heading, then get a
+    // panorama from that and set the options
+    function getStreetView(data, status) {
+      if (status == google.maps.StreetViewStatus.OK) {
+        var nearStreetViewLocation = data.location.latLng;
+        var heading = google.maps.geometry.spherical.computeHeading(
+          nearStreetViewLocation, marker.position);
+          var panoramaOptions = {
+            position: nearStreetViewLocation,
+            pov: {
+              heading: heading,
+              pitch: 30
+            }
+          };
+        var panorama = new google.maps.StreetViewPanorama(
+          document.getElementById('pano'), panoramaOptions);
+      } else {
+          innerHtml += ('<div>No Street View Found</div>');
+          infowindow.setContent(innerHtml);
+      }
+    }
+    // Use streetview service to get the closest streetview image within
+    // 50 meters of the markers position
+    streetViewService.getPanoramaByLocation(marker.position, radius, getStreetView);
+    // Open the infowindow on the correct marker.
+    infowindow.open(map, marker);
+}
 }
 // This function takes in a COLOR, and then creates a new marker
 // icon of that color. The icon will be 21 px wide by 34 high, have an origin
@@ -83,19 +117,17 @@ function makeMarkerIcon(markerColor) {
   return markerImage;
 }
 
+// This function retrieves articles related to specific location
 function getWiki(favItemTitle, infoWindow) {
   console.log(favItemTitle);
   var wikiurl = 'https://en.wikipedia.org/w/api.php?'
       +'action=opensearch&search=' + favItemTitle
       + '&format=json&formatversion=2&redirect=&callback=wikiCallback';
 
+    var $wikiElem = $('#wikipedia-links');
+
     var wikiRequestTimeout = setTimeout(function() {
-      if (infoWindow != null) {
-        var innerHtml = infoWindow.content;
-        innerHtml = innerHtml + '\n'
-            + '<div class="wiki-elem">failed to get wikipedia resources</div>';
-        infoWindow.setContent(innerHtml);
-      }
+      $wikiElem.text("failed to get wikipedia resources");
     }, 8000);
 
     $.ajax({
@@ -105,21 +137,20 @@ function getWiki(favItemTitle, infoWindow) {
         if (infoWindow == null) {
           return;
         }
-        console.log(response);
-        var innerHtml = infoWindow.content;
-        innerHtml += '<div><ul id="wikipedia-links">';
+
+        $wikiElem.append('<h3>' + favItemTitle + ' Wikipedia Links </h3>');
+        $wikiElem.append('<ul>');
         var articleList = response[1];
         for (var i = 0; i < articleList.length; i++) {
           articleStr = articleList[i];
           var url = 'http://en.wikipedia.org/wiki/' + articleStr;
-          innerHtml += ('<li><a href="' + url +'">'
+          $wikiElem.append('<li><a href="' + url +'">'
               + articleStr + '</a></li>');
         };
+        $wikiElem.append('</ul>');
         if (articleList.length == 0) {
-          innerHtml += "No Wikipedia articles found";
+          $wikiElem.text("No wikipedia articles found.")
         }
-        innerHtml += '</ul></div>';
-        infoWindow.setContent(innerHtml);
         clearTimeout(wikiRequestTimeout)
       }
     });
