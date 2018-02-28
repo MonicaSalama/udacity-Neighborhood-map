@@ -33,7 +33,6 @@ function marker(location, largeInfowindow) {
 
   // Create an onclick event to open an infowindow at each marker.
   marker.addListener('click', function() {
-    marker.setIcon(highlightedIcon);
     populateInfoWindow(this, largeInfowindow);
   });
 
@@ -66,6 +65,7 @@ function populateInfoWindow(marker, infowindow) {
     if(infowindow.marker != null) {
       infowindow.marker.setIcon(defaultIcon);
     }
+    marker.setIcon(highlightedIcon);
     infowindow.marker = marker;
     infowindow.setContent('<div>' + marker.title + '</div>');
     infowindow.open(map, marker);
@@ -114,7 +114,6 @@ var ViewModel = function () {
     self.clickFavItem = function(favItemTitle) {
       for (var i = 0; i < self.markerList.length; i++) {
         if (favItemTitle == self.markerList[i].title)  {
-          marker.setIcon(highlightedIcon);
           populateInfoWindow(self.markerList[i], self.largeInfowindow);
         }
       }

@@ -12,6 +12,8 @@ body {
 }
 
 input {
+  margin-left: 5px;
+  width: 80%;
   font-size: 12px;
 }
 
@@ -51,6 +53,9 @@ hr {
   padding: 10px 10px 30px 10px;
   text-align: left;
   width: 340px;
+}
+.search-input {
+  width: inherit;
 }
 
 #pano {
