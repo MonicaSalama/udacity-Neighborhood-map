@@ -1,24 +1,31 @@
 var map;
 // Load the map.
+// These are the favourite location listings that will be shown to the user.
+var locations = [
+  {title: 'Champs-Élysées', location: {lat: 48.865784, lng: 2.307314}},
+  {title: 'Tour Eiffel', location: {lat: 48.85837, lng: 2.294481}},
+  {title: 'Cathédrale Notre-Dame de Paris', location: {lat: 48.852968, lng: 2.349903}},
+  {title: 'Sacré-Coeur', location: {lat:48.886706, lng: 2.343023}},
+  {title: 'Chateau de Vincennes ', location: {lat: 48.842565, lng: 2.434529}},
+  {title: 'Quartier latin', location: {lat: 48.851378, lng: 2.343215}}
+];
+// default icon for the marker
+var defaultIcon;
+// highlighted icon for marker used when user clicks on a marker
+// or clicks an item from the listing
+var highlightedIcon;
+
+// Initialize map to Paris
 function initMap() {
   // Constructor creates a new map - only center and zoom are required.
   map = new google.maps.Map(document.getElementById('map'), {
-    center: {lat: 40.7413549, lng: -73.9980244},
+    center: {lat: 48.856614, lng: 2.352222},
     zoom: 13,
     mapTypeControl: false
   });
 }
 
-// These are the real estate listings that will be shown to the user.
-var locations = [
-  {title: 'Park Ave Penthouse', location: {lat: 40.7713024, lng: -73.9632393}},
-  {title: 'Chelsea Loft', location: {lat: 40.7444883, lng: -73.9949465}},
-  {title: 'Union Square Open Floor Plan', location: {lat: 40.7347062, lng: -73.9895759}},
-  {title: 'East Village Hip Studio', location: {lat: 40.7281777, lng: -73.984377}},
-  {title: 'TriBeCa Artsy Bachelor Pad', location: {lat: 40.7195264, lng: -74.0089934}},
-  {title: 'Chinatown Homey Space', location: {lat: 40.7180628, lng: -73.9961237}}
-];
-
+// A helper function to great a marker for a specific location
 function marker(location, largeInfowindow) {
   var position = location.location;
   var title = location.title;
@@ -38,23 +45,6 @@ function marker(location, largeInfowindow) {
 
   return marker;
 }
-// This function takes in a COLOR, and then creates a new marker
-// icon of that color. The icon will be 21 px wide by 34 high, have an origin
-// of 0, 0 and be anchored at 10, 34).
-function makeMarkerIcon(markerColor) {
-  var markerImage = new google.maps.MarkerImage(
-    'http://chart.googleapis.com/chart?chst=d_map_spin&chld=1.15|0|'+ markerColor +
-    '|40|_|%E2%80%A2',
-    new google.maps.Size(21, 34),
-    new google.maps.Point(0, 0),
-    new google.maps.Point(10, 34),
-    new google.maps.Size(21,34));
-  return markerImage;
-}
-// Style the markers a bit. This will be our listing marker icon.
-var defaultIcon;
-
-var highlightedIcon;
 
 // This function populates the infowindow when the marker is clicked. We'll only allow
 // one infowindow which will open at the marker that is clicked, and populate based
@@ -68,6 +58,7 @@ function populateInfoWindow(marker, infowindow) {
     marker.setIcon(highlightedIcon);
     infowindow.marker = marker;
     infowindow.setContent('<div>' + marker.title + '</div>');
+    getWiki(marker.title, infowindow);
     infowindow.open(map, marker);
     // Make sure the marker property is cleared if the infowindow is closed.
     infowindow.addListener('closeclick', function() {
@@ -78,6 +69,61 @@ function populateInfoWindow(marker, infowindow) {
     });
   }
 }
+// This function takes in a COLOR, and then creates a new marker
+// icon of that color. The icon will be 21 px wide by 34 high, have an origin
+// of 0, 0 and be anchored at 10, 34).
+function makeMarkerIcon(markerColor) {
+  var markerImage = new google.maps.MarkerImage(
+    'http://chart.googleapis.com/chart?chst=d_map_spin&chld=1.15|0|'+ markerColor +
+    '|40|_|%E2%80%A2',
+    new google.maps.Size(21, 34),
+    new google.maps.Point(0, 0),
+    new google.maps.Point(10, 34),
+    new google.maps.Size(21,34));
+  return markerImage;
+}
+
+function getWiki(favItemTitle, infoWindow) {
+  console.log(favItemTitle);
+  var wikiurl = 'https://en.wikipedia.org/w/api.php?'
+      +'action=opensearch&search=' + favItemTitle
+      + '&format=json&formatversion=2&redirect=&callback=wikiCallback';
+
+    var wikiRequestTimeout = setTimeout(function() {
+      if (infoWindow != null) {
+        var innerHtml = infoWindow.content;
+        innerHtml = innerHtml + '\n'
+            + '<div class="wiki-elem">failed to get wikipedia resources</div>';
+        infoWindow.setContent(innerHtml);
+      }
+    }, 8000);
+
+    $.ajax({
+      url: wikiurl,
+      dataType: "jsonp",
+      success: function(response) {
+        if (infoWindow == null) {
+          return;
+        }
+        console.log(response);
+        var innerHtml = infoWindow.content;
+        innerHtml += '<div><ul id="wikipedia-links">';
+        var articleList = response[1];
+        for (var i = 0; i < articleList.length; i++) {
+          articleStr = articleList[i];
+          var url = 'http://en.wikipedia.org/wiki/' + articleStr;
+          innerHtml += ('<li><a href="' + url +'">'
+              + articleStr + '</a></li>');
+        };
+        if (articleList.length == 0) {
+          innerHtml += "No Wikipedia articles found";
+        }
+        innerHtml += '</ul></div>';
+        infoWindow.setContent(innerHtml);
+        clearTimeout(wikiRequestTimeout)
+      }
+    });
+}
 
 
 var ViewModel = function () {
@@ -85,11 +131,13 @@ var ViewModel = function () {
     self.markerList = [];
     self.favItems = ko.observableArray([]);
     self.largeInfowindow = new google.maps.InfoWindow();
-
+    var bounds = new google.maps.LatLngBounds();
     locations.forEach(function(location) {
         self.markerList.push(new marker(location, self.largeInfowindow));
+        bounds.extend(location.location);
         self.favItems.push(location.title);
     });
+    map.fitBounds(bounds);
     self.filter = ko.observable('');
 
     self.filterItems = function() {
