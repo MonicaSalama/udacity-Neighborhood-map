@@ -4,7 +4,9 @@
 
         <title> Paris </title>
 
+        <link rel="stylesheet" href="css/bootstrap.min.css">
         <link rel="stylesheet" href="css/style.css">
+
     </head>
     <body>
 
@@ -22,16 +24,17 @@
               </div>
               <div class="sidebar-section">
                   <div class="sidebar-header">
-                      <h3> Wikipedia Links </h3>
+                      <h3> Wikipedia Links</h3>
                   </div>
                   <div id="wikipedia-links"></div>
+                  <ul data-bind ="foreach : wikiLinksList">
+                      <li> <a data-bind="text: $data.title, attr: { href: $data.url}"></a></li>
+                  </ul>
               </div>
-
-
             </nav>
-
             <!-- Page Content Holder -->
             <div id="content">
+
                 <nav class="navbar navbar-default">
                     <div class="container-fluid">
                         <div class="navbar-header">
