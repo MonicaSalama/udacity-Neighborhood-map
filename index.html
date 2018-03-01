@@ -11,23 +11,27 @@
         <div class="wrapper">
             <!-- Sidebar Holder -->
             <nav id="sidebar">
-                <div class="sidebar-header">
-                    <h3> Paris Best Locations </h3>
-                </div>
-                <div class="search-input">
+              <div class="sidebar-section">
+                  <div class="sidebar-header">
+                      <h3> Paris Best Locations </h3>
+                  </div>
                   <input data-bind="value: filter, valueUpdate: 'afterkeydown', event: {'keyup': filterItems}" type="text" placeholder="Search for names..">
-                </div>
-                <ul data-bind ="foreach : favItems">
-                    <li data-bind="text: $data, click: $parent.clickFavItem"></li>
-                </ul>
+                  <ul data-bind ="foreach : favItems">
+                      <li data-bind="text: $data, click: $parent.clickFavItem"></li>
+                  </ul>
+              </div>
+              <div class="sidebar-section">
+                  <div class="sidebar-header">
+                      <h3> Wikipedia Links </h3>
+                  </div>
+                  <div id="wikipedia-links"></div>
+              </div>
 
-                <div id="wikipedia-links"></div>
 
             </nav>
 
             <!-- Page Content Holder -->
             <div id="content">
-
                 <nav class="navbar navbar-default">
                     <div class="container-fluid">
                         <div class="navbar-header">

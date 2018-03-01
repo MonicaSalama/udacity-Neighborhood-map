@@ -72,6 +72,34 @@ function populateInfoWindow(marker, infowindow) {
     });
 
     getWiki(marker.title, infowindow);
+    var streetViewService = new google.maps.StreetViewService();
+    var radius = 50;
+    // In case the status is OK, which means the pano was found, compute the
+    // position of the streetview image, then calculate the heading, then get a
+    // panorama from that and set the options
+    function getStreetView(data, status) {
+      if (status == google.maps.StreetViewStatus.OK) {
+        var nearStreetViewLocation = data.location.latLng;
+        var heading = google.maps.geometry.spherical.computeHeading(
+          nearStreetViewLocation, marker.position);
+          var panoramaOptions = {
+            position: nearStreetViewLocation,
+            pov: {
+              heading: heading,
+              pitch: 30
+            }
+          };
+        var panorama = new google.maps.StreetViewPanorama(
+          document.getElementById('pano'), panoramaOptions);
+      } else {
+          innerHtml += ('<div>No Street View Found</div>');
+          infowindow.setContent(innerHtml);
+      }
+    }
+    // Use streetview service to get the closest streetview image within
+    // 50 meters of the markers position
+    streetViewService.getPanoramaByLocation(marker.position, radius, getStreetView);
+    // Open the infowindow on the correct marker.
     infowindow.open(map, marker);
   }
 }
@@ -109,8 +137,7 @@ function getWiki(favItemTitle, infoWindow) {
           return;
         }
 
-        var html = ('<h3>' + favItemTitle + ' Wikipedia Links </h3>');
-        html += ('<ul class="list-unstyled components">');
+        var html = ('<ul>');
         var articleList = response[1];
         for (var i = 0; i < articleList.length; i++) {
           articleStr = articleList[i];
@@ -170,7 +197,6 @@ var ViewModel = function () {
         }
       }
     };
-
 }
 
 function initApp() {

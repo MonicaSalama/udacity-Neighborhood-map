@@ -35,7 +35,6 @@ li, li:hover, li:focus {
 .wrapper {
     display: flex;
     align-items: stretch;
-    perspective: 1500px;
 }
 
 #sidebar {
@@ -49,6 +48,7 @@ li, li:hover, li:focus {
 
 #sidebar.active {
     margin-left: -250px;
+    transform: rotateY(100deg);
 }
 
 #sidebar .sidebar-header {
@@ -60,6 +60,7 @@ li, li:hover, li:focus {
     padding: 20px 0;
     border-bottom: 1px solid #47748b;
 }
+
 
 #sidebar ul {
     color: #fff;
@@ -121,6 +122,8 @@ ul li {
     margin: 0 auto;
     display: block;
     background: #555;
+    transition: all 0.8s cubic-bezier(0.810, -0.330, 0.345, 1.375);
+    transition-delay: 0.2s;
 }
 
 #sidebarCollapse span:first-of-type {
@@ -134,6 +137,16 @@ ul li {
 }
 
 
+#sidebarCollapse.active span {
+    transform: none;
+    opacity: 1;
+    margin: 5px auto;
+}
+
+#pano {
+  width: 200px;
+  height: 200px;
+}
 
 #map {
   height:100%;
@@ -143,7 +156,10 @@ a {
   color: #fff;
 }
 input {
-  width: 100%;
+  margin: 0 auto;
+  text-align: center;
+  width: 90%;
+  display: block;
 }
 /* ---------------------------------------------------
     MEDIAQUERIES
