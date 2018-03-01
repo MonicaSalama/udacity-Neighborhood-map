@@ -23,7 +23,7 @@ Internet Browser, ex: Chrome, Firefox.
 
 ![Alt text](SampleRun/1.png?raw=true)
 ![Alt text](SampleRun/2.png?raw=true)
-![Alt text](SampleRun/2.png?raw=true)
+![Alt text](SampleRun/3.png?raw=true)
 
 
 ## Built With
@@ -38,6 +38,6 @@ Internet Browser, ex: Chrome, Firefox.
 * [Google Maps ](https://developers.google.com/maps/documentation/)
 * [Google Maps StreetView service](https://developers.google.com/maps/documentation/javascript/streetview)
 * [Google API Udacity repository](https://github.com/udacity/ud864)
-* [MediaWikiAPI for Wikipedia]('https://www.mediawiki.org/wiki/API:Main_page')
-* [knockout]('http://knockoutjs.com/documentation/introduction.html')
+* [MediaWikiAPI for Wikipedia](https://www.mediawiki.org/wiki/API:Main_page)
+* [knockout](http://knockoutjs.com/documentation/introduction.html)
 * [bootstrap Sidebar Tutorial](https://bootstrapious.com/p/bootstrap-sidebar)
