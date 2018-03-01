@@ -88,7 +88,7 @@ function showListingDetails(marker, infowindow) {
 // one infowindow which will open at the marker that is clicked, and populate based
 // on that markers position.
 function populateInfoWindow(marker, infowindow) {
-  if(infowindow.marker != null) {
+  if(infowindow.marker && infowindow.marker !== null) {
     // When user clicks another marker without closing infoWindow of another
     // previously clicked
     // then clear the previous marker wiki links + set its icon to default
@@ -101,7 +101,7 @@ function populateInfoWindow(marker, infowindow) {
   infowindow.setContent('<div>' + marker.title + '</div>' + '<div id="pano"></div>');
   // Make sure the marker property is cleared if the infowindow is closed.
   infowindow.addListener('closeclick', function() {
-    if(infowindow.marker != null) {
+    if(infowindow.marker && infowindow.marker !== null) {
       clearWikipediaLinks();
       infowindow.marker.setIcon(defaultIcon);
     }
@@ -116,9 +116,7 @@ function populateInfoWindow(marker, infowindow) {
 
 // This function retrieves articles related to specific location * marker location*
 function getWiki(favItemTitle, infoWindow) {
-  var wikiurl = 'https://en.wikipedia.org/w/api.php?'
-      +'action=opensearch&search=' + favItemTitle
-      + '&format=json&formatversion=2&redirect=&callback=wikiCallback';
+  var wikiurl = 'https://en.wikipedia.org/w/api.php?action=opensearch&search=' + favItemTitle + '&format=json&formatversion=2&redirect=&callback=wikiCallback';
 
     var $wikiElem = $('#wikipedia-links');
 
@@ -137,13 +135,13 @@ function getWiki(favItemTitle, infoWindow) {
           articleStr = articleList[i];
           var url = 'http://en.wikipedia.org/wiki/' + articleStr;
           model.wikiLinksList.push({url: url, title: articleStr});
-        };
-        if (articleList.length == 0) {
-          $wikiElem.text("No wikipedia articles found.")
+        }
+        if (articleList.length === 0) {
+          $wikiElem.text("No wikipedia articles found.");
         }
         // The request succeded timeout must be cleared.
         errorWiki = false;
-        clearTimeout(wikiRequestTimeout)
+        clearTimeout(wikiRequestTimeout);
       }
     });
 }
@@ -256,7 +254,7 @@ var ViewModel = function () {
         }
       }
     };
-}
+};
 
 // Initialize App
 function initApp() {
