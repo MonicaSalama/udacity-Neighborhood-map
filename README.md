@@ -10,8 +10,8 @@ The Application is also responsive, you can view Paris on your preferred device.
 ## Getting Started
 
 ### Clone the repository:
-git clone https://github.com/MonicaSalama/udacity-Neighborhood-map
-Open index.html using your favorite Internet browser.
+###git clone https://github.com/MonicaSalama/udacity-Neighborhood-map
+###Open index.html using your favorite Internet browser.
 
 
 ### Prerequisites
