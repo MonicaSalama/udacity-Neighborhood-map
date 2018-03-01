@@ -4,7 +4,7 @@ A single page application featuring the map of Paris.
 The application includes some of my favorite locations.
 Each location has a clickable marker to show info about it ex: StreetView, Wikipedia Links related to it.
 You may also filter out of my favorite locations or click on any of them from the sidebar to see it corresponding location on the Map.
-The Application is also responsive, you can view Paris on you preferred device.
+The Application is also responsive, you can view Paris on your preferred device.
 
 
 ## Getting Started
