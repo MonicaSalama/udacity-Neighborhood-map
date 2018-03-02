@@ -1,3 +1,4 @@
+"use strict";
 // Represents the app viewModel.
 var model;
 // If same marker clicked more than once, if error has occured reload else do nothing
@@ -13,8 +14,11 @@ var locations = [
   {title: 'Cathédrale Notre-Dame de Paris', location: {lat: 48.852968, lng: 2.349903}},
   {title: 'Sacré-Coeur', location: {lat:48.886706, lng: 2.343023}},
   {title: 'Chateau de Vincennes ', location: {lat: 48.842565, lng: 2.434529}},
-  {title: 'Quartier latin', location: {lat: 48.851378, lng: 2.343215}}
+  {title: 'Quartier latin', location: {lat: 48.851378, lng: 2.343215}},
+  {title: 'smasjoajo', location: {lat: 48.821378, lng: 2.343215}}
+
 ];
+
 // default icon for the marker
 var defaultIcon;
 // highlighted icon for marker used when user clicks on a marker
@@ -32,11 +36,20 @@ function initMap() {
   });
 }
 
+// Failed to load google map.
+function googleError() {
+  $('#myModal').modal('show');
+}
+
+// Google map loading returns an error.
+function gm_authFailure() {
+  googleError();
+}
 // A helper function to create a marker for a specific location
 function marker(location, largeInfowindow) {
   var position = location.location;
   var title = location.title;
-   var marker = new google.maps.Marker({
+  var marker = new google.maps.Marker({
     map: map,
     icon: defaultIcon,
     position: position,
@@ -48,7 +61,6 @@ function marker(location, largeInfowindow) {
     // Populates info window and show wiki articles related to this marker
     showListingDetails(marker, largeInfowindow);
   });
-
   return marker;
 }
 
@@ -71,6 +83,7 @@ function makeMarkerIcon(markerColor) {
 function showListingDetails(marker, infowindow) {
   // Check to make sure the infowindow is not already opened on this marker
   if (infowindow.marker != marker) {
+    clearMarker(infowindow);
     populateInfoWindow(marker, infowindow);
     getWiki(marker.title, infowindow);
     return;
@@ -88,24 +101,13 @@ function showListingDetails(marker, infowindow) {
 // one infowindow which will open at the marker that is clicked, and populate based
 // on that markers position.
 function populateInfoWindow(marker, infowindow) {
-  if(infowindow.marker && infowindow.marker !== null) {
-    // When user clicks another marker without closing infoWindow of another
-    // previously clicked
-    // then clear the previous marker wiki links + set its icon to default
-    clearWikipediaLinks();
-    infowindow.marker.setIcon(defaultIcon);
-  }
   // set the marker icon to highlighted
   marker.setIcon(highlightedIcon);
   infowindow.marker = marker;
   infowindow.setContent('<div>' + marker.title + '</div>' + '<div id="pano"></div>');
   // Make sure the marker property is cleared if the infowindow is closed.
   infowindow.addListener('closeclick', function() {
-    if(infowindow.marker && infowindow.marker !== null) {
-      clearWikipediaLinks();
-      infowindow.marker.setIcon(defaultIcon);
-    }
-    infowindow.marker = null;
+      clearMarker(infowindow);
   });
 
   // show street view of the marker location in the infoWindow
@@ -118,26 +120,26 @@ function populateInfoWindow(marker, infowindow) {
 function getWiki(favItemTitle, infoWindow) {
   var wikiurl = 'https://en.wikipedia.org/w/api.php?action=opensearch&search=' + favItemTitle + '&format=json&formatversion=2&redirect=&callback=wikiCallback';
 
-    var $wikiElem = $('#wikipedia-links');
-
     // if request fails show a message to the user in the wikipedia section.
     var wikiRequestTimeout = setTimeout(function() {
       errorWiki = true;
-      $wikiElem.text("   Failed to get wikipedia resources   ");
+      model.wikiLinksList.removeAll();
+      model.wikiLinksList.push({url: '#', title: "Failed to get wikipedia resources"});
     }, 4000);
 
     $.ajax({
       url: wikiurl,
       dataType: "jsonp",
       success: function(response) {
+        model.wikiLinksList.removeAll();
         var articleList = response[1];
         for (var i = 0; i < articleList.length; i++) {
-          articleStr = articleList[i];
+          var articleStr = articleList[i];
           var url = 'http://en.wikipedia.org/wiki/' + articleStr;
           model.wikiLinksList.push({url: url, title: articleStr});
         }
         if (articleList.length === 0) {
-          $wikiElem.text("No wikipedia articles found.");
+          model.wikiLinksList.push({url: '#', title: "No wikipedia articles found"});
         }
         // The request succeded timeout must be cleared.
         errorWiki = false;
@@ -147,13 +149,11 @@ function getWiki(favItemTitle, infoWindow) {
 }
 
 // clear all data related to a previously clicked marker.
-function clearWikipediaLinks() {
-  // This is important, if a previous request has failes or found
-  // no articles the wiki element will have some indicatif text in it
-  // and must be cleared.
-  $('#wikipedia-links').text('');
-  // remove all previous links related to another previously
-  // clicked marker
+function clearMarker(infowindow) {
+  if(infowindow.marker && infowindow.marker !== null) {
+    infowindow.marker.setIcon(defaultIcon);
+    infowindow.marker = null;
+  }
   model.wikiLinksList.removeAll();
 }
 
@@ -221,12 +221,11 @@ var ViewModel = function () {
     self.filterItems = function() {
       // filter provided by the user.
       var filterText = self.filter().toUpperCase();
-
       self.markerList.forEach(function(marker) {
 
-        title = marker.title.toUpperCase();
+        var title = marker.title.toUpperCase();
         // get marker corresponding item in favorite items list.
-        favItemIndex = self.favItems.indexOf(marker.title);
+        var favItemIndex = self.favItems.indexOf(marker.title);
         if (title.indexOf(filterText) > -1) {
           // Item should be included
           marker.setMap(map);

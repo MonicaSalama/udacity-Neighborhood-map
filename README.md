@@ -40,4 +40,6 @@ Internet Browser, ex: Chrome, Firefox.
 * [Google API Udacity repository](https://github.com/udacity/ud864)
 * [MediaWikiAPI for Wikipedia](https://www.mediawiki.org/wiki/API:Main_page)
 * [knockout](http://knockoutjs.com/documentation/introduction.html)
+* [bootstrap](https://getbootstrap.com/)
 * [bootstrap Sidebar Tutorial](https://bootstrapious.com/p/bootstrap-sidebar)
+* [bootstrap Modal](https://www.w3schools.com/bootstrap/bootstrap_modal.asp)
