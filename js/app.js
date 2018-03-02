@@ -1,4 +1,3 @@
-"use strict";
 // Represents the app viewModel.
 var model;
 // If same marker clicked more than once, if error has occured reload else do nothing
@@ -14,9 +13,7 @@ var locations = [
   {title: 'Cathédrale Notre-Dame de Paris', location: {lat: 48.852968, lng: 2.349903}},
   {title: 'Sacré-Coeur', location: {lat:48.886706, lng: 2.343023}},
   {title: 'Chateau de Vincennes ', location: {lat: 48.842565, lng: 2.434529}},
-  {title: 'Quartier latin', location: {lat: 48.851378, lng: 2.343215}},
-  {title: 'smasjoajo', location: {lat: 48.821378, lng: 2.343215}}
-
+  {title: 'Quartier latin', location: {lat: 48.851378, lng: 2.343215}}
 ];
 
 // default icon for the marker
